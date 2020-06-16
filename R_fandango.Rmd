@@ -1,0 +1,72 @@
+---
+title: "R_fandango"
+output: html_document
+
+Introduction: the analysis is to see whether fandango has changed the rating calculation since Hicky's analysis
+---
+
+```{r setup, include=FALSE}
+library(readr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(ggplot2)
+
+old <- read_csv('Movie_ratings_2016_17-master/fandango_score_comparison.csv')
+new <- read_csv('Movie_ratings_2016_17-master/movie_ratings_16_17.csv')
+
+
+
+```
+
+
+
+```{r}
+old <- old %>%
+  select(FILM,Fandango_Stars, Fandango_Ratingvalue, Fandango_votes, Fandango_Difference)
+
+new <- new %>%
+  select('movie', 'year', 'fandango')
+
+#more process
+old <- old %>%
+  filter(str_detect(FILM,"(2015)")) %>%
+  select(FILM, Fandango_Stars) %>%
+  rename(movie = FILM, fandango = Fandango_Stars) %>%
+  mutate(year = 2015) %>%
+  mutate(movie = str_replace(movie, "(\\(2015\\))", ""))
+
+new <- new %>%
+  filter(year == "2016")
+
+compare <- bind_rows(old, new)
+compare <- compare %>%
+  mutate(year = map_chr(year, toString))
+```
+
+
+```{r}
+summary(new)
+summary(old)
+```
+
+
+```{r}
+```
+
+
+
+```{r }
+ggplot(data = compare, aes(x = fandango, color = year)) +
+  geom_density() +
+  scale_x_continuous(breaks = seq(0, 5, by = 0.5), lim = c(0,5))
+  
+```
+The shape of both distributions are left tailed. 
+
+The peak of the 2015 shape is at a higher rating than the peak of the 2016 shape.
+
+It suggested there was indeed a change of moving ratings for fandango from 2015 to 2016.
+
+The rating in 2016 is lower than the rating in 2015.
+

@@ -1,0 +1,1 @@
+Has fandango changed the rating calculation since Hicky's analysis
